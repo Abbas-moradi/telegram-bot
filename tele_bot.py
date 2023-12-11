@@ -9,8 +9,8 @@ db_config = {
     'dbname': 'database_name',
     'user': 'database_user',
     'password': 'database_password',
-    'host': 'database_host',
-    'port': 'database_port',
+    'host': 'localhost',
+    'port': '5432',
 }
 
 conn = psycopg2.connect(**db_config)
