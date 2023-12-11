@@ -35,6 +35,18 @@ def register(message):
 @bot.message_handler(content_types=['contact'])
 def contact_register(message):
     print(message.contact)
+    sql = "INSERT INTO users (user_id, first_name, last_name, phone, vcard, questoin_maker) VALUES (%s, %s, %s, %s, %s)"
+    values = (message.contact['user_id'], message.contact['first_name'], 
+              message.contact['last_name'], message.contact['phone_number'],
+              message.contact['vcard'], 'False')
+
+    try:
+        cursor.execute(sql, values)
+        conn.commit()
+        bot.send_message(message.chat.id, "اطلاعات شما با موفقیت ذخیره شد.")
+    except Exception as e:
+        conn.rollback()
+        bot.send_message(message.chat.id, "خطا در ذخیره اطلاعات در دیتابیس.")
 
 @bot.message_handler()
 def hello_message(message):
