@@ -29,9 +29,14 @@ def contact_register(message):
     contact_info['first_name']= message.contact.first_name
     contact_info['last_name']= message.contact.last_name
     contact_info['phone_number']= message.contact.phone_number
-    contact_info['vcart']= message.contact.vcard
+    contact_info['vcard']= message.contact.vcard
     
-    user_register(contact_info)
+    if user_register(contact_info)==True:
+        bot.send_message(message.chat.id, "اطلاعات شما با موفقیت ذخیره شد.")
+    elif user_register(contact_info)=='exists':
+        bot.send_message(message.chat.id, "شما قبلا ثبت نام کرده اید.")
+    else:
+        bot.send_message(message.chat.id, "خطا در ذخیره اطلاعات در دیتابیس.") 
     
 
 @bot.message_handler()

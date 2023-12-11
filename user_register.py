@@ -3,27 +3,42 @@ import os
 
 
 db_config = {
-    'dbname': os.environ.get('DB_NAME'),
-    'user': os.environ.get('DB_USER'),
-    'password': os.environ.get('DB_PASSWORD'),
-    'host': os.environ.get('DB_HOST'),
-    'port': os.environ.get('DB_PORT', '5432'),
+    'dbname': "tejarat_bot",
+    'user': "postgres",
+    'password': "@bb@s1366",
+    'host': "localhost",
+    'port': '5432',
 }
 
-# conn = psycopg2.connect(**db_config)
-# cursor = conn.cursor()
+conn = psycopg2.connect(**db_config)
+cursor = conn.cursor()
 
 
 def user_register(user_info, *args, **kwargs):
-    sql = "INSERT INTO users (user_id, first_name, last_name, phone, vcard, questoin_maker) VALUES (%s, %s, %s, %s, %s)"
-    values = (user_info['user_id'], user_info['first_name'], 
-              user_info['last_name'], user_info['phone_number'],
-              user_info['vcard'], 'False')
+    check_query = "SELECT EXISTS (SELECT 1 FROM user_info WHERE user_id = %s)"
+    check_values = (user_info['user_id'],)
 
+    cursor.execute(check_query, check_values)
+    record_exists = cursor.fetchone()[0]
+
+    if record_exists:
+        return 'exists'
+    
+    sql = "INSERT INTO user_info (user_id, first_name, last_name, phone_number, vcard, questoin_maker) VALUES (%s, %s, %s, %s, %s, %s)"
+    values = (
+        user_info['user_id'], 
+        user_info['first_name'], 
+        user_info['last_name'], 
+        user_info['phone_number'],
+        user_info['vcard'], 
+        'False'
+        )
+    
     try:
         cursor.execute(sql, values)
         conn.commit()
-        bot.send_message(message.chat.id, "اطلاعات شما با موفقیت ذخیره شد.")
+        return True
     except Exception as e:
         conn.rollback()
-        bot.send_message(message.chat.id, "خطا در ذخیره اطلاعات در دیتابیس.")
+        return False
+        
