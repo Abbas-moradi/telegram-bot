@@ -1,20 +1,9 @@
 import telebot
 from telebot import types
-import psycopg2
+from user_register import user_register
 
 
 bot = telebot.TeleBot('6547851672:AAF46rU-DYL6obqQJtB60ZS2EqbFxzUG-HM')
-
-db_config = {
-    'dbname': 'database_name',
-    'user': 'database_user',
-    'password': 'database_password',
-    'host': 'localhost',
-    'port': '5432',
-}
-
-conn = psycopg2.connect(**db_config)
-cursor = conn.cursor()
 
 
 @bot.message_handler(commands=['start'])
@@ -34,19 +23,16 @@ def register(message):
 
 @bot.message_handler(content_types=['contact'])
 def contact_register(message):
-    print(message.contact)
-    sql = "INSERT INTO users (user_id, first_name, last_name, phone, vcard, questoin_maker) VALUES (%s, %s, %s, %s, %s)"
-    values = (message.contact['user_id'], message.contact['first_name'], 
-              message.contact['last_name'], message.contact['phone_number'],
-              message.contact['vcard'], 'False')
-
-    try:
-        cursor.execute(sql, values)
-        conn.commit()
-        bot.send_message(message.chat.id, "اطلاعات شما با موفقیت ذخیره شد.")
-    except Exception as e:
-        conn.rollback()
-        bot.send_message(message.chat.id, "خطا در ذخیره اطلاعات در دیتابیس.")
+    contact_info = {}
+   
+    contact_info['user_id']= message.contact.user_id
+    contact_info['first_name']= message.contact.first_name
+    contact_info['last_name']= message.contact.last_name
+    contact_info['phone_number']= message.contact.phone_number
+    contact_info['vcart']= message.contact.vcard
+    
+    user_register(contact_info)
+    
 
 @bot.message_handler()
 def hello_message(message):
