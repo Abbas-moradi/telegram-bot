@@ -1,9 +1,10 @@
 import telebot
 from telebot import types
 from user_register import user_register
+import os
 
 
-bot = telebot.TeleBot('6547851672:AAF46rU-DYL6obqQJtB60ZS2EqbFxzUG-HM')
+bot = telebot.TeleBot(os.environ.get('TELE_BOT_KEY'))
 
 
 @bot.message_handler(commands=['start'])
