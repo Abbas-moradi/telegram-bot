@@ -1,7 +1,20 @@
 import telebot
 from telebot import types
+import psycopg2
+
 
 bot = telebot.TeleBot('6547851672:AAF46rU-DYL6obqQJtB60ZS2EqbFxzUG-HM')
+
+db_config = {
+    'dbname': 'database_name',
+    'user': 'database_user',
+    'password': 'database_password',
+    'host': 'database_host',
+    'port': 'database_port',
+}
+
+conn = psycopg2.connect(**db_config)
+cursor = conn.cursor()
 
 
 @bot.message_handler(commands=['start'])
