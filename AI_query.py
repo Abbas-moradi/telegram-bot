@@ -5,10 +5,8 @@ data = [
     {"question": "سلام چطور می‌توانم به شما کمک کنم؟", "answer": "سلام! خوش آمدید. لطفاً سوال خود را بپرسید."},
 ]
 
-# تبدیل سوالات به لیست لغتنامه‌ای
 sentences = [question["question"].split() for question in data]
 
-# ایجاد مدل Word2Vec
 model = Word2Vec(sentences, vector_size=100, window=5, min_count=1, workers=4)
 
 
@@ -16,13 +14,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
 def get_most_similar_question(input_text):
-    # تبدیل متن ورودی به بردار با استفاده از مدل Word2Vec
     input_vector = np.mean([model.wv[word] for word in input_text.split() if word in model.wv], axis=0)
 
-    # محاسبه شباهت کسینوسی بین متن ورودی و سوالات موجود
     similarities = [cosine_similarity([input_vector], [model.wv[word] for word in question["question"].split() if word in model.wv])[0][0] for question in data]
 
-    # پیدا کردن سوال با بیشترین شباهت
     most_similar_index = np.argmax(similarities)
     most_similar_question = data[most_similar_index]["question"]
     most_similar_answer = data[most_similar_index]["answer"]
