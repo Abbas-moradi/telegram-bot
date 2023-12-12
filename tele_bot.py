@@ -4,7 +4,8 @@ from user_register import user_register
 import os
 
 
-bot = telebot.TeleBot(os.environ.get('TELE_BOT_KEY'))
+# bot = telebot.TeleBot(os.environ.get('TELE_BOT_KEY'))
+bot = telebot.TeleBot(token='6547851672:AAF46rU-DYL6obqQJtB60ZS2EqbFxzUG-HM')
 
 
 @bot.message_handler(commands=['start'])
@@ -46,3 +47,30 @@ def hello_message(message):
         bot.reply_to(message, "سلام به تو کارمند پرتلاش بانک تجارت")
 
 bot.infinity_polling(none_stop=True)
+
+
+# The following section is for inline query settings
+
+items = [
+    {'id':'1', 'title':'Robot maker', 'description':'I am Abbas Moradi, the creator of this robot \nI hope that this robot will help you in solving work problems', 'message':'', 'thumbnail':'https:\\i.imgur.com\C9Zqgon.jpg'},
+    {'id':'2', 'title':'بانک تجارت', 'description':'بانک تجارت، بانک فردا', 'message':'', 'thumbnail':'https:\\i.imgur.com\sIXQJPT.png'},
+    {'id':'3', 'title':'بهبود عملکرد', 'description':'در صورت تمایل به همکاری در بهبود عملکرد ربات با من در تماس باشید، 09362546408', 'message':'', 'thumbnail':'https:\\i.imgur.com\oHyfoFt.jpg'}
+    ]
+
+@bot.inline_handler(lambda query: len(query.query)==0)
+def handle_inline_query(query):
+    results = []
+
+    for item in items:
+        result = types.InlineQueryResultArticle(
+            id=item['id'],
+            title=item['title'],
+            description=item['description'],
+            input_message_content=types.InputTextMessageContent(
+                message_text=item['message']
+            ),
+            thumbnail_url=item['thumbnail']
+        )
+        results.append(result)
+    
+    bot.answer_inline_query(query.id, results)
