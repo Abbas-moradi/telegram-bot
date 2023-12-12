@@ -1,6 +1,7 @@
 import telebot
 from telebot import types
 from user_register import user_register
+from user_exists import user_exists
 import os
 
 
@@ -13,14 +14,24 @@ def register(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
     button = types.KeyboardButton(text='ثبت نام در ربات', request_contact=True)
     markup.add(button)
+    user = message.chat.id
+    find_user = user_exists(user)
 
-    bot.send_message(message.chat.id, "\n سلام ، به ربات کمک یار کارمند بانک تجارت خوش آمدید."
-                                    " قصد داریم با این ربات کمی از مشکلات کارمندان بکاهیم"
-                                    " شما میتوانید مشکلات خود را بصورت سوال از ربات پرسیده  "
-                                    "و در صورت وجود جواب در داده های ربات ،پاسخ نمایش داده میشود"
-                                    "\n قبل از استفاده از ربات شما باید ثبت نام کنید و اطلاعات شما"
-                                    "در پایگاه داده ی ما ثبت شود",
-                     reply_markup=markup)
+    if find_user == user:
+        bot.send_message(message.chat.id, "\n سلام ، به ربات کمک یار کارمند بانک تجارت خوش آمدید."
+                                        " قصد داریم با این ربات کمی از مشکلات کارمندان بکاهیم"
+                                        " شما میتوانید مشکلات خود را بصورت سوال از ربات پرسیده  "
+                                        "و در صورت وجود جواب در داده های ربات ،پاسخ نمایش داده میشود"
+                                        "\n قبل از استفاده از ربات شما باید ثبت نام کنید و اطلاعات شما"
+                                        "در پایگاه داده ی ما ثبت شود",
+                        reply_markup=markup)
+    else:
+        fu = find_user.strip()
+        bot.send_message(message.chat.id, f"\n سلام {fu} عزیز ، به ربات کمک یار کارمند بانک تجارت خوش آمدید."
+                                        " قصد داریم با این ربات کمی از مشکلات کارمندان بکاهیم"
+                                        " شما میتوانید مشکلات خود را بصورت سوال از ربات پرسیده  "
+                                        "و در صورت وجود جواب در داده های ربات ،پاسخ نمایش داده میشود",
+                        )
     
 
 @bot.message_handler(content_types=['contact'])
