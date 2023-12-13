@@ -2,11 +2,31 @@ import telebot
 from telebot import types
 from user_register import user_register
 from user_exists import user_exists
+from question_register import question_register
 import os
 
 
 # bot = telebot.TeleBot(os.environ.get('TELE_BOT_KEY'))
 bot = telebot.TeleBot(token='6547851672:AAF46rU-DYL6obqQJtB60ZS2EqbFxzUG-HM')
+
+
+# The following section is for question maker
+
+@bot.message_handler(commands=['QM'])
+def questoin_maker(message):
+    
+    msg = bot.send_message(message.chat.id, 'مشکل یا تجربه خود را مطرح کنید.')
+    bot.register_next_step_handler(msg, question)
+
+def question(message):
+    global qst
+    qst = message.text
+    msg = bot.send_message(message.chat.id, 'راه حل پیشنهادی برای تجربه شما چیست؟')
+    bot.register_next_step_handler(msg, answer)
+
+def answer(message):
+    asw = message.text
+    question_register(qst, asw)
 
 
 @bot.message_handler(commands=['start'])
@@ -57,8 +77,6 @@ def hello_message(message):
     if message.text in ['سلام', 'hi', 'hello', 'Hi', 'Hello', 'salam', 'چطوری']:
         bot.reply_to(message, "سلام به تو کارمند پرتلاش بانک تجارت")
 
-bot.infinity_polling(none_stop=True)
-
 
 # The following section is for inline query settings
 
@@ -85,3 +103,7 @@ def handle_inline_query(query):
         results.append(result)
     
     bot.answer_inline_query(query.id, results)
+
+
+
+bot.infinity_polling(none_stop=True)

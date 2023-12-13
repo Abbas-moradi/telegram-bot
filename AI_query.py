@@ -1,4 +1,7 @@
 from gensim.models import Word2Vec
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+
 
 data = [
     {"question": "چطور اطلاعات حساب کاربری را تغییر دهم؟", "answer": "برای تغییر اطلاعات حساب کاربری به قسمت تنظیمات مراجعه کنید."},
@@ -9,9 +12,6 @@ sentences = [question["question"].split() for question in data]
 
 model = Word2Vec(sentences, vector_size=100, window=5, min_count=1, workers=4)
 
-
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
 
 def get_most_similar_question(input_text):
     input_vector = np.mean([model.wv[word] for word in input_text.split() if word in model.wv], axis=0)
