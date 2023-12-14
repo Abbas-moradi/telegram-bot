@@ -8,7 +8,8 @@ import os
 
 
 # bot = telebot.TeleBot(os.environ.get('TELE_BOT_KEY')) 
-bot = telebot.TeleBot(token='6547851672:AAEJP4ES9iZgIcJcfYj8PiIhopwTpj0UM5I')
+token = os.environ.get["TELE_BOT_KEY"]
+bot = telebot.TeleBot(token)
 
 
 # The following section is for question maker
