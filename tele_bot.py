@@ -5,10 +5,11 @@ from user_exists import user_exists
 from question_register import question_register
 from check_user_question_maker import user_check
 import os
+from dotenv import load_dotenv
 
 
 # bot = telebot.TeleBot(os.environ.get('TELE_BOT_KEY')) 
-token = os.environ.get["TELE_BOT_KEY"]
+token = os.getenv("TELE_BOT_KEY")
 bot = telebot.TeleBot(token)
 
 
@@ -95,9 +96,21 @@ def hello_message(message):
 # The following section is for inline query settings
 
 items = [
-    {'id':'1', 'title':'Robot maker', 'description':'I am Abbas Moradi, the creator of this robot \nI hope that this robot will help you in solving work problems', 'message':'', 'thumbnail':'https:\\i.imgur.com\C9Zqgon.jpg'},
-    {'id':'2', 'title':'بانک تجارت', 'description':'بانک تجارت، بانک فردا', 'message':'', 'thumbnail':'https:\\i.imgur.com\sIXQJPT.png'},
-    {'id':'3', 'title':'بهبود عملکرد', 'description':'در صورت تمایل به همکاری در بهبود عملکرد ربات با من در تماس باشید، 09362546408', 'message':'', 'thumbnail':'https:\\i.imgur.com\oHyfoFt.jpg'}
+    {'id':'1', 
+     'title':'Robot maker',
+     'description':'I am Abbas Moradi, the creator of this robot. I hope that this robot will help you in solving work problems', 
+     'message':'من عباس مرادی، هدف از نوشتن این ربات را بر پایه و اساس کمک به همکاران و دوستان خودم در استان قزوین قرار دادم و امیدوارم با این ربات بتونم دین خودم رو به دوستانی که همیشه به من لطف داشته و دارند، ادا بکنم.', 
+     'thumbnail':'https://i.imgur.com/C9Zqgon.jpg'},
+    {'id':'2', 
+     'title':'بانک تجارت', 
+     'description':'بانک تجارت، بانک فردا', 
+     'message':'بانک تجارت، شرکت خدمات مالی و بانکداری ایرانی است. بانک تجارت بزرگ‌ترین بانک بورسی کشور، پس از انقلاب از ادغام چندین بانک تأسیس شد که قدیمی‌ترین آنها «بانک ایران و خاورمیانه» (پیشتر با نام بانک شاهنشاهی ایران) بود که از سال ۱۲۶۶ فعالیت داشت. طبق آمار سازمان مدیریت صنعتی کشور، هلدینگ بانک تجارت یکی از ۱۰۰شرکت برتر اقتصاد کشور شناخته شده‌است. اداره مرکزی بانک تجارت مستقر در برج تجارت شهر تهران می‌باشد. شعب، دفاتر و بانک‌های وابسته به بانک تجارت در خارج ازکشور درکشورهای فرانسه، جمهوری تاجیکستان، چین، انگلستان، امارات متحده عربی، آلمان و بلاروس درسطح بین‌المللی مشغول فعالیت می‌باشند. این بانک همچنین تنها بانکی است که هدف برنامه چهارم توسعه کشور در حمایت از بخش کشاورزی را محقق کرده‌است.بانک تجارت نخستین بانکی بود که از سیستم SGB استفاده نمود.', 
+     'thumbnail':'https://i.imgur.com/sIXQJPT.png'},
+    {'id':'3', 
+     'title':'بهبود عملکرد', 
+     'description':'در صورت تمایل به همکاری در بهبود عملکرد ربات با من در تماس باشید، 09362546408', 
+     'message':'بنده برای بهبود عملکرد این ربات پذیرای پیشنهادات و نظرات شما عزیزان هستم.', 
+     'thumbnail':'https://i.imgur.com/oHyfoFt.jpg'}
     ]
 
 @bot.inline_handler(lambda query: len(query.query)==0)

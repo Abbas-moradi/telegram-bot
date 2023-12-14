@@ -1,23 +1,20 @@
 import psycopg2
 import os
+from dotenv import load_dotenv
 
+
+dotenv_path = ".env"
+load_dotenv(dotenv_path)
 
 
 
 db_config = {
-    'dbname': os.environ.get("DB_NAME"),
-    'user': os.environ.get("DB_USER"),
-    'password': os.environ.get("DB_PASSWORD"),
-    'host': os.environ.get("DB_HOST"),
-    'port': os.environ.get("DB_PORT"),
+    'dbname': os.getenv("DB_NAME"),
+    'user': os.getenv("DB_USER"),
+    'password': os.getenv("DB_PASSWORD"),
+    'host': os.getenv("DB_HOST"),
+    'port': os.getenv("DB_PORT"),
 }
 
-# db_config = {
-#     'dbname': "tejarat_bot",
-#     'user': "postgres",
-#     'password': "@bb@s1366",
-#     'host': "localhost",
-#     'port': '5432',
-# }
 conn = psycopg2.connect(**db_config)
 cursor = conn.cursor()
