@@ -9,9 +9,9 @@ def user_check(id):
 
     if not result:
         return 'user no register'
-    elif result[-1]==False:
+    elif result[5]==False:
         return False
-    elif result[-1]==True:
+    elif result[5]==True:
         return True
 
     

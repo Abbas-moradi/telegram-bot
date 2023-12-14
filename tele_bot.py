@@ -8,7 +8,6 @@ import os
 from dotenv import load_dotenv
 
 
-# bot = telebot.TeleBot(os.environ.get('TELE_BOT_KEY')) 
 token = os.getenv("TELE_BOT_KEY")
 bot = telebot.TeleBot(token)
 
@@ -91,6 +90,10 @@ def contact_register(message):
 def hello_message(message):
     if message.text in ['سلام', 'hi', 'hello', 'Hi', 'Hello', 'salam', 'چطوری']:
         bot.reply_to(message, "سلام به تو کارمند پرتلاش بانک تجارت")
+    elif message.text in ['خسته', 'خسته شدم', 'خسته ام', 'خستگی', 'خسته شدم', 'خسته شدم',]:
+        bot.reply_to(message, "واقعا خسته نباشی همکار عزیز، میدونم کارت سخت و طاقت فرساست ولی باید قوی باشی و به اینده روشن فکر کنی.")
+    else:
+
 
 
 # The following section is for inline query settings
