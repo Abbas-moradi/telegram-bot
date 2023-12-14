@@ -1,4 +1,4 @@
-from user_register import conn, cursor
+from db_conection import cursor, conn
 from datetime import datetime
 
 
