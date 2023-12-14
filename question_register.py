@@ -1,19 +1,23 @@
-import psycopg2
-import os
-
-
-db_config = {
-    'dbname': "tejarat_bot",
-    'user': "postgres",
-    'password': "@bb@s1366",
-    'host': "localhost",
-    'port': '5432',
-}
-
-conn = psycopg2.connect(**db_config)
-cursor = conn.cursor()
+from user_register import conn, cursor
+from datetime import datetime
 
 
 def question_register(*args, **kwargs):
-    question , answer = args[0], args[1]
+    question , answer, id = args[0], args[1], args[2]
+    date_now = datetime.now()
     print(f'Questio: {question} \nAnswer: {answer}')
+    sql = "INSERT INTO question (question, answer, created, user_id_creator) VALUES (%s, %s, %s, %s)"
+    values = (
+        question,
+        answer,
+        date_now,
+        id
+        )
+    
+    try:
+        cursor.execute(sql, values)
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        return False

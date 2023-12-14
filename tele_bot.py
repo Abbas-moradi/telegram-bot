@@ -3,6 +3,7 @@ from telebot import types
 from user_register import user_register
 from user_exists import user_exists
 from question_register import question_register
+from check_user_question_maker import user_check
 import os
 
 
@@ -14,9 +15,18 @@ bot = telebot.TeleBot(token='6547851672:AAF46rU-DYL6obqQJtB60ZS2EqbFxzUG-HM')
 
 @bot.message_handler(commands=['QM'])
 def questoin_maker(message):
-    
-    msg = bot.send_message(message.chat.id, 'مشکل یا تجربه خود را مطرح کنید.')
-    bot.register_next_step_handler(msg, question)
+    global user
+    user = message.chat.id
+
+    if user_check(user) == False:
+        bot.send_message(message.chat.id, 'با عرض پوزش شما جزو طراحان سوال ما نیستید.')
+
+    if user_check(user) == 'user no register':
+        bot.send_message(message.chat.id, 'لطفا ابتدا ثبت نام کنید سپس اقدام به ثبت سوال کنید.')
+
+    if user_check(user) == True:
+        msg = bot.send_message(message.chat.id, 'مشکل یا تجربه خود را مطرح کنید.')
+        bot.register_next_step_handler(msg, question)
 
 def question(message):
     global qst
@@ -26,7 +36,10 @@ def question(message):
 
 def answer(message):
     asw = message.text
-    question_register(qst, asw)
+    if question_register(qst, asw, user) == True:
+        bot.send_message(message.chat.id, 'سوال شما با موفقیت ثبت شد.')
+    elif question_register(qst, asw, user) == False:
+        bot.send_message(message.chat.id, 'خطایی در ثبت سوال رخ داده است.')
 
 
 @bot.message_handler(commands=['start'])
