@@ -92,7 +92,7 @@ def contact_register(message):
 def hello_message(message):
     if message.text in ['سلام', 'hi', 'hello', 'Hi', 'Hello', 'salam', 'چطوری']:
         bot.reply_to(message, "سلام به تو کارمند پرتلاش بانک تجارت")
-    elif message.text in ['خسته', 'خسته شدم', 'خسته ام', 'خستگی', 'خسته شدم', 'خسته شدم',]:
+    elif message.text in ['خسته', 'خسته شدم', 'خسته ام', 'خستگی', 'خسته نباشی', 'خسته ها',]:
         bot.reply_to(message, "واقعا خسته نباشی همکار عزیز، میدونم کارت سخت و طاقت فرساست ولی باید قوی باشی و به آینده روشن فکر کنی.")
     else:
         sql = 'SELECT * FROM question WHERE status=%s'
