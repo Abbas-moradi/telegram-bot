@@ -6,6 +6,8 @@ from question_register import question_register
 from check_user_question_maker import user_check
 import os
 from dotenv import load_dotenv
+from db_conection import cursor, conn
+from AI_query import result
 
 
 token = os.getenv("TELE_BOT_KEY")
@@ -91,8 +93,20 @@ def hello_message(message):
     if message.text in ['سلام', 'hi', 'hello', 'Hi', 'Hello', 'salam', 'چطوری']:
         bot.reply_to(message, "سلام به تو کارمند پرتلاش بانک تجارت")
     elif message.text in ['خسته', 'خسته شدم', 'خسته ام', 'خستگی', 'خسته شدم', 'خسته شدم',]:
-        bot.reply_to(message, "واقعا خسته نباشی همکار عزیز، میدونم کارت سخت و طاقت فرساست ولی باید قوی باشی و به اینده روشن فکر کنی.")
+        bot.reply_to(message, "واقعا خسته نباشی همکار عزیز، میدونم کارت سخت و طاقت فرساست ولی باید قوی باشی و به آینده روشن فکر کنی.")
     else:
+        sql = 'SELECT * FROM question WHERE status=%s'
+        cursor.execute(sql, (True,))
+
+        results = cursor.fetchall()
+        dataset = {}
+        for data in results:
+            dataset[data[1]] = data[2]
+
+        msq, msa = result(message.text, dataset)
+        bot.send_message(message.chat.id, f'سوالی که شما پرسیدید: {message.text} \n سوال مشابه در سرور: {msq} \n پاسخ شما : {msa}')
+            
+            
 
 
 

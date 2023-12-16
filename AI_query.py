@@ -1,33 +1,26 @@
-from gensim.models import Word2Vec
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
 
 
-data = [
-    {"question": "چطور اطلاعات حساب کاربری را تغییر دهم؟", "answer": "برای تغییر اطلاعات حساب کاربری به قسمت تنظیمات مراجعه کنید."},
-    {"question": "سلام چطور می‌توانم به شما کمک کنم؟", "answer": "سلام! خوش آمدید. لطفاً سوال خود را بپرسید."},
-]
+def get_most_similar_question(user_input, database, vectorizer, tfidf_matrix):
+    user_vector = vectorizer.transform([user_input])
 
-sentences = [question["question"].split() for question in data]
+    # Calculate cosine similarity between user input and database questions
+    similarities = cosine_similarity(user_vector, tfidf_matrix)
 
-model = Word2Vec(sentences, vector_size=100, window=5, min_count=1, workers=4)
+    # Get the index of the most similar question
+    most_similar_index = similarities.argmax()
 
+    most_similar_question = list(database.keys())[most_similar_index]
+    return most_similar_question, database[most_similar_question]
 
-def get_most_similar_question(input_text):
-    input_vector = np.mean([model.wv[word] for word in input_text.split() if word in model.wv], axis=0)
+def result(user_input, database):
+    # Create TF-IDF vectorizer
+    vectorizer = TfidfVectorizer()
 
-    similarities = [cosine_similarity([input_vector], [model.wv[word] for word in question["question"].split() if word in model.wv])[0][0] for question in data]
+    # Fit and transform the database questions
+    tfidf_matrix = vectorizer.fit_transform(database.keys())
+    
+    most_similar_question, answer = get_most_similar_question(user_input, database, vectorizer, tfidf_matrix)
+    return most_similar_question, answer
 
-    most_similar_index = np.argmax(similarities)
-    most_similar_question = data[most_similar_index]["question"]
-    most_similar_answer = data[most_similar_index]["answer"]
-
-    return most_similar_question, most_similar_answer
-
-
-user_input = "کمک"
-most_similar_question, most_similar_answer = get_most_similar_question(user_input)
-
-print(f"سوال شما: {user_input}")
-print(f"سوال مشابه: {most_similar_question}")
-print(f"پاسخ: {most_similar_answer}")
