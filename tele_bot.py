@@ -55,18 +55,18 @@ def callback(call):
 # The following section is for question maker
 @bot.message_handler(commands=['QM'])
 def questoin_maker(message):
-    global user
-    user = message.chat.id
-    authenticate = auth_user(user)
+    global user_id
+    user_id = message.chat.id
+    authenticate = auth_user(user_id)
 
     if authenticate==True:
-        if user_check(user) == False:
+        if user_check(user_id) == False:
             bot.send_message(message.chat.id, 'با عرض پوزش شما جزو طراحان سوال ما نیستید.')
 
-        if user_check(user) == 'user no register':
+        if user_check(user_id) == 'user no register':
             bot.send_message(message.chat.id, 'لطفا ابتدا ثبت نام کنید سپس اقدام به ثبت سوال کنید.')
 
-        if user_check(user) == True:
+        if user_check(user_id) == True:
             msg = bot.send_message(message.chat.id, 'مشکل یا تجربه خود را مطرح کنید.')
             bot.register_next_step_handler(msg, question)
     elif authenticate==False:
@@ -80,9 +80,9 @@ def question(message):
 
 def answer(message):
     asw = message.text
-    if question_register(qst, asw, user) == True:
+    if question_register(qst, asw, user_id) == True:
         bot.send_message(message.chat.id, 'سوال|تجربه شما با موفقیت ثبت شد.')
-    elif question_register(qst, asw, user) == False:
+    elif question_register(qst, asw, user_id) == False:
         bot.send_message(message.chat.id, 'خطایی در ثبت سوال رخ داده است.')
 
 # ---------> End question maker section <---------
@@ -95,6 +95,8 @@ def register(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
     button = types.KeyboardButton(text='ثبت نام در ربات', request_contact=True)
     markup.add(button)
+    global user_id
+    user_id = message.chat.id
     user = message.chat.id
     find_user = user_exists(user)
 
@@ -104,14 +106,21 @@ def register(message):
                                         " شما میتوانید مشکلات خود را بصورت سوال از ربات پرسیده  "
                                         "و در صورت وجود جواب در داده های ربات ،پاسخ نمایش داده میشود"
                                         "\n قبل از استفاده از ربات شما باید ثبت نام کنید و اطلاعات شما"
-                                        "در پایگاه داده ی ما ثبت شود",
+                                        "در پایگاه داده ی ما ثبت شود"
+                                        "\n-/start شروع مسیر-شروع به کار ربات"
+                                        "\n-/QM طراحی سوال"
+                                        "\n-/help نکته های مفید کمکی",
                         reply_markup=markup)
     else:
         fu = find_user.strip()
         bot.send_message(message.chat.id, f"\n سلام {fu} عزیز ، به ربات کمک یار کارمند بانک تجارت خوش آمدید."
                                         " قصد داریم با این ربات کمی از مشکلات کارمندان بکاهیم"
                                         " شما میتوانید مشکلات خود را بصورت سوال از ربات پرسیده  "
-                                        "و در صورت وجود جواب در داده های ربات ،پاسخ نمایش داده میشود",
+                                        "و در صورت وجود جواب در داده های ربات ،پاسخ نمایش داده میشود"
+                                        "\n در صورت عدم وجود جواب سوالی بصورت تصادفی نمایش داده میشود.\n"
+                                        "\n-/start شروع مسیر-شروع به کار ربات"
+                                        "\n-/QM طراحی سوال"
+                                        "\n-/help نکته های مفید کمکی",
                         )
     
 
@@ -171,7 +180,7 @@ items = [
     {'id':'1', 
      'title':'Robot maker',
      'description':'I am Abbas Moradi, the creator of this robot. I hope that this robot will help you in solving work problems', 
-     'message':'من عباس مرادی، هدف از نوشتن این ربات را بر پایه و اساس کمک به همکاران و دوستان خودم در استان قزوین قرار دادم و امیدوارم با این ربات بتونم دین خودم رو به دوستانی که همیشه به من لطف داشته و دارند، ادا بکنم.', 
+     'message':'من عباس مرادی، هدف از نوشتن این ربات را بر پایه و اساس کمک به همکاران و دوستان خودم در استان قزوین قرار دادم و امیدوارم با این ربات بتوانم دین خودم را به دوستان و همکارانم، ادا کرده باشم.', 
      'thumbnail':'https://i.imgur.com/C9Zqgon.jpg'},
     {'id':'2', 
      'title':'بانک تجارت', 
