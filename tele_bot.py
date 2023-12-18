@@ -23,7 +23,6 @@ markup.add(like, dislike)
 
 @bot.callback_query_handler(func=lambda call:True)
 def callback(call):
-    # print(call.message.json['reply_markup']['inline_keyboard'])
     if call.data == 'like':
         like_sql = 'SELECT * FROM likes WHERE user_id=%s and question=%s'
         cursor.execute(like_sql, (user_id, msq))
