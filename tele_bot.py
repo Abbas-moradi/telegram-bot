@@ -144,6 +144,20 @@ def contact_register(message):
 # ---------> End start and user registration section <---------
     
 
+# The following section is help 
+
+@bot.message_handler(commands=['help', 'کمک'])
+def register(message):
+    bot.send_message(message.chat.id, '/start'
+                     '\n/help'
+                     '\n/QM -> question maker'
+                     '\n/contact'
+                     '\nhello, hi, salam ...'
+                     '\ntime, date, تاریخ',)
+
+# ---------> End start and user registration section <---------
+
+
 # The following section is where appropriate reactions are returned to user inputs
 
 @bot.message_handler()
@@ -154,6 +168,8 @@ def hello_message(message):
         bot.reply_to(message, "سلام به تو کارمند پرتلاش بانک تجارت")
     elif message.text in ['خسته', 'خسته شدم', 'خسته ام', 'خستگی', 'خسته نباشی', 'خسته ها',]:
         bot.reply_to(message, "واقعا خسته نباشی همکار عزیز، میدونم کارت سخت و طاقت فرساست ولی باید قوی باشی و به آینده روشن فکر کنی.")
+    elif message.text in['date', 'time', 'تاریخ']:
+        bot.reply_to(message, datetime.datetime.now())
     else:
         if authenticate==True:
             global user_id
