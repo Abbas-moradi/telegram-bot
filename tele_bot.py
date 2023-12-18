@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from db_conection import cursor, conn
 from AI_query import result
 import datetime
+from authentication import auth_user
 
 
 token = os.getenv("TELE_BOT_KEY")
@@ -56,16 +57,20 @@ def callback(call):
 def questoin_maker(message):
     global user
     user = message.chat.id
+    authenticate = auth_user(user)
 
-    if user_check(user) == False:
-        bot.send_message(message.chat.id, 'با عرض پوزش شما جزو طراحان سوال ما نیستید.')
+    if authenticate==True:
+        if user_check(user) == False:
+            bot.send_message(message.chat.id, 'با عرض پوزش شما جزو طراحان سوال ما نیستید.')
 
-    if user_check(user) == 'user no register':
-        bot.send_message(message.chat.id, 'لطفا ابتدا ثبت نام کنید سپس اقدام به ثبت سوال کنید.')
+        if user_check(user) == 'user no register':
+            bot.send_message(message.chat.id, 'لطفا ابتدا ثبت نام کنید سپس اقدام به ثبت سوال کنید.')
 
-    if user_check(user) == True:
-        msg = bot.send_message(message.chat.id, 'مشکل یا تجربه خود را مطرح کنید.')
-        bot.register_next_step_handler(msg, question)
+        if user_check(user) == True:
+            msg = bot.send_message(message.chat.id, 'مشکل یا تجربه خود را مطرح کنید.')
+            bot.register_next_step_handler(msg, question)
+    elif authenticate==False:
+        bot.send_message(message.chat.id, 'حساب شما هنوز تایید اعتبار نشده است.')
 
 def question(message):
     global qst
@@ -134,23 +139,28 @@ def contact_register(message):
 
 @bot.message_handler()
 def hello_message(message):
+    authenticate = auth_user(message.chat.id)
+
     if message.text in ['سلام', 'hi', 'hello', 'Hi', 'Hello', 'salam', 'چطوری']:
         bot.reply_to(message, "سلام به تو کارمند پرتلاش بانک تجارت")
     elif message.text in ['خسته', 'خسته شدم', 'خسته ام', 'خستگی', 'خسته نباشی', 'خسته ها',]:
         bot.reply_to(message, "واقعا خسته نباشی همکار عزیز، میدونم کارت سخت و طاقت فرساست ولی باید قوی باشی و به آینده روشن فکر کنی.")
     else:
-        global user_id
-        user_id = message.chat.id
-        sql = 'SELECT * FROM question WHERE status=%s'
-        cursor.execute(sql, (True,))
+        if authenticate==True:
+            global user_id
+            user_id = message.chat.id
+            sql = 'SELECT * FROM question WHERE status=%s'
+            cursor.execute(sql, (True,))
 
-        results = cursor.fetchall()
-        dataset = {}
-        for data in results:
-            dataset[data[1]] = f'{data[2]}\n \n \n تا الان {data[5]} کاربر این سوال و پاسخ را پسندیدند. '
-        global msq
-        msq, msa = result(message.text, dataset)
-        bot.send_message(message.chat.id, f'سوالی که شما پرسیدید : {message.text} \n سوال مشابه در سرور : {msq} \n پاسخ : {msa}', reply_markup=markup)          
+            results = cursor.fetchall()
+            dataset = {}
+            for data in results:
+                dataset[data[1]] = f'{data[2]}\n \n \n تا الان {data[5]} کاربر این سوال و پاسخ را پسندیدند. '
+            global msq
+            msq, msa = result(message.text, dataset)
+            bot.send_message(message.chat.id, f'سوالی که شما پرسیدید : {message.text} \n سوال مشابه در سرور : {msq} \n پاسخ : {msa}', reply_markup=markup)          
+        elif authenticate==False:
+            bot.send_message(message.chat.id, 'حساب شما هنوز تایید اعتبار نشده است.')
 
 # ---------> End appropriate reactions section <---------
 
