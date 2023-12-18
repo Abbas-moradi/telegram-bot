@@ -147,7 +147,7 @@ def hello_message(message):
         results = cursor.fetchall()
         dataset = {}
         for data in results:
-            dataset[data[1]] = f'{data[2]}\n \n \n پسندیده شده:{data[5]}'
+            dataset[data[1]] = f'{data[2]}\n \n \n تا الان {data[5]} کاربر این سوال و پاسخ را پسندیدند. '
         global msq
         msq, msa = result(message.text, dataset)
         bot.send_message(message.chat.id, f'سوالی که شما پرسیدید : {message.text} \n سوال مشابه در سرور : {msq} \n پاسخ : {msa}', reply_markup=markup)          
