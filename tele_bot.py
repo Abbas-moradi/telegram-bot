@@ -8,14 +8,49 @@ import os
 from dotenv import load_dotenv
 from db_conection import cursor, conn
 from AI_query import result
+import datetime
 
 
 token = os.getenv("TELE_BOT_KEY")
 bot = telebot.TeleBot(token)
 
 
-# The following section is for question maker
+like = telebot.types.InlineKeyboardButton('می پسندم', callback_data='like')
+dislike = telebot.types.InlineKeyboardButton('نمی پسندم', callback_data='dislike')
+markup = telebot.types.InlineKeyboardMarkup()
+markup.add(like, dislike)
 
+
+@bot.callback_query_handler(func=lambda call:True)
+def callback(call):
+    # print(call.message.json['reply_markup']['inline_keyboard'])
+    if call.data == 'like':
+        like_sql = 'SELECT * FROM likes WHERE user_id=%s and question=%s'
+        cursor.execute(like_sql, (user_id, msq))
+        like_result = cursor.fetchone()
+        if like_result is not None:
+            bot.answer_callback_query(call.id, 'شما قبلا این سوال و پاسخ را پسندیده اید.\n از همراهی شما سپاسگذاریم', show_alert=True)
+        elif like_result is None:
+            bot.answer_callback_query(call.id, 'شما این سوال و پاسخ را پسندیدید.\n نظر شما ثبت شد', show_alert=True) 
+            sql = 'SELECT * FROM question WHERE question=%s'
+            cursor.execute(sql, (msq,))
+            result = cursor.fetchone()
+            if result is not None:
+                result = result[5] 
+                new_value = result + 1
+
+                update_sql = 'UPDATE question SET likes=%s WHERE question=%s'
+                cursor.execute(update_sql, (new_value, msq))
+                conn.commit()
+            
+            like_sql_reg = 'INSERT INTO likes (user_id, created, question) VALUES (%s, %s, %s)'
+            cursor.execute(like_sql_reg, (user_id, datetime.datetime.now(), msq))
+            conn.commit()
+        
+    elif call.data == 'dislike':
+        pass
+
+# The following section is for question maker
 @bot.message_handler(commands=['QM'])
 def questoin_maker(message):
     global user
@@ -40,10 +75,14 @@ def question(message):
 def answer(message):
     asw = message.text
     if question_register(qst, asw, user) == True:
-        bot.send_message(message.chat.id, 'سوال شما با موفقیت ثبت شد.')
+        bot.send_message(message.chat.id, 'سوال|تجربه شما با موفقیت ثبت شد.')
     elif question_register(qst, asw, user) == False:
         bot.send_message(message.chat.id, 'خطایی در ثبت سوال رخ داده است.')
 
+# ---------> End question maker section <---------
+
+
+# The following section is the start and user registration section
 
 @bot.message_handler(commands=['start'])
 def register(message):
@@ -86,7 +125,11 @@ def contact_register(message):
         bot.send_message(message.chat.id, "شما قبلا ثبت نام کرده اید.")
     else:
         bot.send_message(message.chat.id, "خطا در ذخیره اطلاعات در دیتابیس.") 
+
+# ---------> End start and user registration section <---------
     
+
+# The following section is where appropriate reactions are returned to user inputs
 
 @bot.message_handler()
 def hello_message(message):
@@ -95,19 +138,20 @@ def hello_message(message):
     elif message.text in ['خسته', 'خسته شدم', 'خسته ام', 'خستگی', 'خسته نباشی', 'خسته ها',]:
         bot.reply_to(message, "واقعا خسته نباشی همکار عزیز، میدونم کارت سخت و طاقت فرساست ولی باید قوی باشی و به آینده روشن فکر کنی.")
     else:
+        global user_id
+        user_id = message.chat.id
         sql = 'SELECT * FROM question WHERE status=%s'
         cursor.execute(sql, (True,))
 
         results = cursor.fetchall()
         dataset = {}
         for data in results:
-            dataset[data[1]] = data[2]
-
+            dataset[data[1]] = f'{data[2]}\n \n \n پسندیده شده:{data[5]}'
+        global msq
         msq, msa = result(message.text, dataset)
-        bot.send_message(message.chat.id, f'سوالی که شما پرسیدید: {message.text} \n سوال مشابه در سرور: {msq} \n پاسخ شما : {msa}')
-            
-            
+        bot.send_message(message.chat.id, f'سوالی که شما پرسیدید : {message.text} \n سوال مشابه در سرور : {msq} \n پاسخ : {msa}', reply_markup=markup)          
 
+# ---------> End appropriate reactions section <---------
 
 
 # The following section is for inline query settings
@@ -147,7 +191,7 @@ def handle_inline_query(query):
         results.append(result)
     
     bot.answer_inline_query(query.id, results)
-
+# ---------> End inline query section <---------
 
 
 bot.infinity_polling(none_stop=True)
