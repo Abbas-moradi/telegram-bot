@@ -21,6 +21,7 @@ markup = telebot.types.InlineKeyboardMarkup()
 markup.add(like, dislike)
 
 
+# The following codes is callback section 
 @bot.callback_query_handler(func=lambda call:True)
 def callback(call):
     if call.data == 'like':
@@ -48,6 +49,7 @@ def callback(call):
         
     elif call.data == 'dislike':
         pass
+# ---------> End callback section <---------
 
 # The following section is for question maker
 @bot.message_handler(commands=['QM'])
