@@ -144,7 +144,7 @@ def contact_register(message):
 # ---------> End start and user registration section <---------
     
 
-# The following section is help 
+# The following section is help commands
 
 @bot.message_handler(commands=['help', 'کمک'])
 def register(message):
