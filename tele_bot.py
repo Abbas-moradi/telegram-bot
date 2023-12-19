@@ -151,7 +151,7 @@ def register(message):
     bot.send_message(message.chat.id, '/start'
                      '\n/help'
                      '\n/QM -> question maker'
-                     '\n/contact'
+                     '\n/Contact'
                      '\nhello, hi, salam ...'
                      '\ntime, date, تاریخ',)
 
